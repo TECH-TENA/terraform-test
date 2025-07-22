@@ -45,13 +45,13 @@ resource "aws_iam_role_policy" "ami_cleanup_policy" {
         Resource = "*"
       },
       {
-        Effect = "Allow",
-        Action = ["sns:Publish"],
+        Effect   = "Allow",
+        Action   = ["sns:Publish"],
         Resource = var.sns_topic_arn
       },
       {
-        Effect = "Allow",
-        Action = ["ssm:PutParameter"],
+        Effect   = "Allow",
+        Action   = ["ssm:PutParameter"],
         Resource = "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/ami-cleanup/last-run"
       },
       {
@@ -74,10 +74,10 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_lambda_function" "ami_cleanup" {
-  function_name    = var.lambda_name
-  handler          = "lambda_function.lambda_handler"
-  runtime          = "python3.12"
-  role             = aws_iam_role.ami_cleanup_lambda.arn
+  function_name = var.lambda_name
+  handler       = "lambda_function.lambda_handler"
+  runtime       = "python3.12"
+  role          = aws_iam_role.ami_cleanup_lambda.arn
 
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -134,7 +134,7 @@ resource "aws_sns_topic" "ami_cleanup_notifications" {
 }
 
 resource "aws_sns_topic_subscription" "email_subscriptions" {
-  for_each = toset(["your-email@example.com"])  # Replace with your actual emails or pass as var
+  for_each  = toset(["your-email@example.com"]) # Replace with your actual emails or pass as var
   topic_arn = aws_sns_topic.ami_cleanup_notifications.arn
   protocol  = "email"
   endpoint  = each.value

@@ -3,10 +3,7 @@ name: Terraform Modules CI/
 on:
   push:
     branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+      - main
 
 jobs:
   validate-all-terraform:

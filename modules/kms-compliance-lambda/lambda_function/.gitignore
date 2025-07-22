@@ -1,0 +1,12 @@
+# Ignore unnecessary packages
+/bin/
+/certifi/
+/certifi-2025.4.26.dist-info/
+/charset_normalizer/
+/charset_normalizer-3.4.2.dist-info/
+/idna/
+/idna-3.10.dist-info/
+/requests/
+/requests-2.32.3.dist-info/
+/urllib3/
+/urllib3-2.4.0.dist-info/

@@ -1,0 +1,90 @@
+tags:
+  owner: "Webforx Technology"
+  team: "Webforx Team"
+  environment: "development"
+  project: "connect"
+  create_by: "Terraform"
+  cloud_provider: "aws"
+  confidentiality: "internal"
+  costcenter: "dev-connect-eng"
+
+
+efs_shared:
+  name: "shared"
+  creation_token: "shared-token"
+  performance_mode: "generalPurpose"
+  throughput_mode: "bursting"
+
+vpc:
+
+
+  vpc_id: vpc-0e8f86b83c9500653
+  private_subnets: [
+    subnet-066255e709a0847bb,
+    subnet-0ff301b5ab8fd2d9e,
+    subnet-0df8150f105d97132
+
+  vpc_id: vpc-xxxxxxxxxxxxxxx
+  private_subnets: [
+    subnet-xxxxxxxxxxxxxxxxxx,
+    subnet-xxxxxxxxxxxxxxxxxx,
+    subnet-xxxxxxxxxxxxxxxxxx
+
+
+  vpc_id: vpc-xxxxxxxxxxxxxxx
+  private_subnets: [
+    subnet-xxxxxxxxxxxxxxxxx,
+    subnet-xxxxxxxxxxxxxxxxx,
+    subnet-xxxxxxxxxxxxxxxxx
+
+
+  vpc_id: vpc-09e26d6ae47f2a3c6
+  private_subnets: [
+    subnet-0090f0a4bfa78c620,
+    subnet-0965ec4f4e9057e0b,
+    subnet-0b6ce84daa47be0f9
+
+  ]
+
+
+rds:
+  kms_config:
+    description: "KMS key for RDS used by Connect app"
+    deletion_window_in_days: 30
+    enable_key_rotation: true
+
+  monitoring_config:
+    namespace: "AWS/RDS"
+    cpu_metric_name: "CPUUtilization"
+    cpu_period: 300
+    cpu_statistic: "Average"
+    cpu_threshold: 80
+    cpu_evaluation_periods: 2
+    cpu_comparison_operator: "GreaterThanThreshold"
+    cpu_alarm_description: "Connect RDS: High CPU usage"
+
+    storage_metric_name: "FreeStorageSpace"
+    storage_period: 600
+    storage_statistic: "Minimum"
+    storage_threshold: 10737418240
+    storage_evaluation_periods: 1
+    storage_comparison_operator: "LessThanThreshold"
+    storage_alarm_description: "Connect RDS: Low storage warning"
+
+
+
+efs_shared:
+  name: "shared"
+  creation_token: "shared-token"
+  performance_mode: "generalPurpose"
+  throughput_mode: "bursting"
+
+vpc:
+  vpc_id: vpc-09e26d6ae47f2a3c6
+  private_subnets: [
+    subnet-0090f0a4bfa78c620,
+    subnet-0965ec4f4e9057e0b,
+    subnet-0b6ce84daa47be0f9
+  ]
+
+

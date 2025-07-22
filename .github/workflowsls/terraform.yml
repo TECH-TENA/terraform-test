@@ -1,0 +1,62 @@
+name: Terraform Modules CI/
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  validate-all-terraform:
+    name: Validate Terraform in modules and resources
+    runs-on: docker
+    container:
+      image: alpine:3.20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+
+      - name: Install TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.50.3
+
+      - name: Scan Terraform directories
+        shell: bash
+        run: |
+          set -e
+
+          for base in modules resources; do
+            for dir in $base/*/; do
+              echo "Validating Terraform in $dir"
+
+              echo "Checking format..."
+              terraform -chdir=$dir fmt -check -recursive
+
+              echo "Running init..."
+              terraform -chdir=$dir init -backend=false
+
+              echo "Running validate..."
+              terraform -chdir=$dir validate
+
+              echo "Running TFLint (optional)..."
+              cd $dir
+              tflint --init || true
+              tflint || true
+              cd - > /dev/null
+
+              echo "Running plan with dummy variable..."
+              echo 'variable "dummy" { default = "value" }' > $dir/dummy.tf
+              terraform -chdir=$dir plan -var="dummy=value"
+
+              echo "Finished $dir"
+            done
+          done

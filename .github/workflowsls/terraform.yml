@@ -1,30 +1,29 @@
-name: Terraform Modules CI/
+name: Terraform Modules CI
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
 jobs:
   validate-all-terraform:
     name: Validate Terraform in modules and resources
-    runs-on: docker
+    runs-on: ubuntu-latest
     container:
-      image: alpine:3.20
+      image: hashicorp/terraform:1.10.5
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.10.5
-
       - name: Install TFLint
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: v0.50.3
+        run: |
+          apk add --no-cache curl bash git unzip
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --version
 
       - name: Scan Terraform directories
         shell: bash
@@ -35,25 +34,25 @@ jobs:
             for dir in $base/*/; do
               echo "Validating Terraform in $dir"
 
-              echo "Checking format..."
+              echo "Checking formatting..."
               terraform -chdir=$dir fmt -check -recursive
 
-              echo "Running init..."
+              echo "Initializing..."
               terraform -chdir=$dir init -backend=false
 
-              echo "Running validate..."
+              echo "Validating..."
               terraform -chdir=$dir validate
 
-              echo "Running TFLint (optional)..."
+              echo "Running TFLint..."
               cd $dir
               tflint --init || true
               tflint || true
               cd - > /dev/null
 
-              echo "Running plan with dummy variable..."
+              echo "Running Terraform plan with dummy variable..."
               echo 'variable "dummy" { default = "value" }' > $dir/dummy.tf
               terraform -chdir=$dir plan -var="dummy=value"
 
-              echo "Finished $dir"
+              echo "Finished processing $dir"
             done
           done
